@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 const game_size = 10;
 
 const field_size = 55*10;
-const main_header_height = 80;
+const main_header_height = 70;
 const field_segment_size = field_size/game_size - 5;
 const field_segment_offset = field_segment_size/10;
 const field_segment_space = field_segment_size+field_segment_offset;
@@ -21,13 +21,32 @@ const selected_segment_size = field_segment_size*.90;
 const pool_header_height = (canvas.height + (main_header_height+field_size) - pool_block_segment_space*5)/2;
 
 const stat_position = new Dot(canvas.width/2,main_header_height/2+10);
-
+ 
 let stat_score = 0;
 let stat_steps = 0;
+const loader = document.querySelector('.loader');
+const main = document.querySelector('.main');
 
+// Preloader //
+function init() { 
+  setTimeout(() => {
+    loader.style.opacity = 0;
+    loader.style.display = 'none';
+    main.style.display = 'block';
+    setTimeout(() => (main.style.opacity = 1), 50);
+  }, 2000);
+}
+
+init();
 function time_null(){
     return new Date().getMilliseconds();
 }
+function changeBackground(color) {
+    document.body.style.background = color;
+ }
+ 
+ window.addEventListener("load",function() { changeBackground('#262626') });
+ 
 
 function Random(seed){
     this.seed = seed;
@@ -43,10 +62,13 @@ function Random(seed){
 }
 
 let main_rand = new Random(228);
-
+function refreshPage(){
+    window.location.reload();
+} 
 function draw_stat(){
-    ctx.font = "30px Comic Sans MS";
-    ctx.fillStyle = "black";
+  
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "grey";
     ctx.textAlign = "center";
     ctx.fillText("Score: "+String(stat_score)+"             Steps: "+String(stat_steps), stat_position.x, stat_position.y);
 }
@@ -60,7 +82,8 @@ function Segment(x,y,size){
     this.position = new Dot(x,y);
     this.size = size;
     this.path = null;
-    this.color = "#ffffff";
+    this.color = "grey";
+
     this.state = 1;
     this.draw = function (){
         this.path = new Path2D();
@@ -74,15 +97,17 @@ function Segment(x,y,size){
 }
 
 const colors = [
-    "#74a417",
-    "#ee4e1e",
-    "#3db0bf",
-    "#ffca00",
-    "#911acf",
-    "#e902dc"
+    // "#74a417",
+    // "#ee4e1e",
+    // "#3db0bf",
+    // "#ffca00",
+    // "#911acf",
+    // "#e902dc"
+    "#101010"
 ]
 
 const Forms = {
+    //standart
     VERTICAL_LINE_2:0,
     VERTICAL_LINE_3:1,
     VERTICAL_LINE_4:2,
@@ -103,6 +128,7 @@ const Forms = {
     SQUARE_ANGLE_RD_3:17,
     DOT:18,
 
+    //extended
     RECT_HORIZONTAL_3_2:19,
     RECT_HORIZONTAL_4_2:20,
     RECT_VERTICAL_3_2:21,
@@ -187,7 +213,9 @@ function FigureShape(segments_matrix_pos){
         }
         return figure_segments;
     }
+  
 }
+
 
 function PoolBlock(start_x){
     this.start_x = start_x;
@@ -465,7 +493,7 @@ function PoolBlock(start_x){
             // }
         }
     }
-    const select_height_offset = 250;
+    const select_height_offset =260;
     this.select_block = function (x,y){
         for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) {
             this.segments[i][j].size = selected_segment_size;
@@ -480,6 +508,7 @@ function PoolBlock(start_x){
                 i * (field_segment_space) + x - canvas.offsetLeft - field_segment_space*2,
                 j * (field_segment_space) + y - select_height_offset);
         }
+        
     }
     this.unselect_block = function (){
         for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) {
@@ -492,7 +521,7 @@ function PoolBlock(start_x){
     this.clear = function (){
         for (let i = 0; i < 5; i++) for (let j = 0; j < 5; j++) {
             this.segments[i][j].state = 1;
-            this.segments[i][j].color = "#ffffff";
+            this.segments[i][j].color = "grey";
         }
     }
 }
@@ -516,8 +545,9 @@ function update_pool(){
         pool_blocks[i].figure = random_figure();
         pool_blocks[i].process_figure();
     }
+   
 }
-
+window.requestAnimationFrame(main_update);
 function draw_pool(){
     for (let i = 0; i < 3; i++) {
         pool_blocks[i].draw();
@@ -681,7 +711,7 @@ function game_is_over(){
 
 function game_over(){
     alert("Game over!");
-    const url = canvas.toDataURL('image/png');
+    // const url = canvas.toDataURL('image/png');
     let link = document.createElement("a");
     link.download = url.substring((url.lastIndexOf("/") + 1), url.length);
     link.href = url;
@@ -776,7 +806,7 @@ function clear_filled_lines(){
     for (let j of horizontals) {
         for (let i = 0; i < game_size; i++) {
             field_segments[j][i].state = 1;
-            field_segments[j][i].color = "#ffffff";
+            field_segments[j][i].color = "grey";
         }
         stat_score+=game_size;
     }
@@ -784,7 +814,7 @@ function clear_filled_lines(){
     for (let j of verticals) {
         for (let i = 0; i < game_size; i++) {
             field_segments[i][j].state = 1;
-            field_segments[i][j].color = "#ffffff";
+            field_segments[i][j].color = "grey";
         }
         stat_score+=game_size;
     }

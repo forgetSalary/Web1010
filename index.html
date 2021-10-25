@@ -2,15 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>1010</title>
+    <title>Game</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet/less" type="text/css" href="assets/styles/main.less" />
-    <script src="//cdn.jsdelivr.net/npm/less" ></script>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./preloader.css">
+    <link rel="shortcut icon" href="icon.png" type="icon/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="canvas-field">
-        <canvas id="canvas" width="600" height="880" id="field" ></canvas>
-    </div>
-    <script src="assets/scripts/main.js"></script>
+    
+    <div class="loader">
+        <div class="circle"></div>
+        <div class="circle"></div>
+      </div>
+
+    
+    <section class="main">
+        <section class="dash">
+        <button class="restart" type="submit" onClick="refreshPage()">Restart</button> 
+    <section class="canvas-field">
+        <canvas id="canvas"  width="1200" height="800" id="field" ></canvas>
+    </section>
+</section>
+
+
+ 
+    <script src="assets/scripts/main.js">
+  
+</script>
 </body>
 </html>

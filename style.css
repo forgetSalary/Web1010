@@ -1,0 +1,56 @@
+*{
+    
+  margin:0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.canvas-field{
+
+  display: block;
+  background: #262626;
+  width: min-content;
+  height:min-content;
+  margin:auto;
+  border-radius: 1rem;
+  box-shadow: 0 0 50px rgba(0,0,0,0.9);
+}
+main{
+  font-family: 'Roboto', sans-serif;
+  height:100vh ;
+  background:white;
+}
+.dash{
+ padding-top: 3%;
+}
+
+.restart{
+position: absolute;
+color:grey;
+border: none;
+font-size: 30px;
+background: none;
+margin-left: 25%;
+margin-top:15px; 
+}
+.restart:hover{
+  color:#bc2a8d;
+  transition: 0.3s ;
+}
+
+
+
+
+
+
+
+
+/* 
+*{
+color: #74a417,
+    #ee4e1e,
+    #3db0bf,
+    #ffca00,
+    #911acf,
+    #e902dc
+} */
