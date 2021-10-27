@@ -8,7 +8,7 @@
 .canvas-field{
 
   display: block;
-  background: #262626;
+  background: white;
   width: min-content;
   height:min-content;
   margin:auto;
@@ -18,7 +18,7 @@
 main{
   font-family: 'Roboto', sans-serif;
   height:100vh ;
-  background:white;
+
 }
 .dash{
  padding-top: 3%;
