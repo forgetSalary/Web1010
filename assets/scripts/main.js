@@ -1,6 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-
+const scroeElem= document.getElementById("Score");
+const stepElem= document.getElementById("Step");
 const game_size = 10;
 
 const field_size = 55*10;
@@ -27,6 +28,7 @@ let stat_steps = 0;
 const loader = document.querySelector('.loader');
 const main = document.querySelector('.main');
 
+
 // Preloader //
 function init() { 
   setTimeout(() => {
@@ -45,7 +47,7 @@ function changeBackground(color) {
     document.body.style.background = color;
  }
  
- window.addEventListener("load",function() { changeBackground('#262626') });
+//  window.addEventListener("load",function() { changeBackground('#262626') });
  
 
 function Random(seed){
@@ -65,13 +67,13 @@ let main_rand = new Random(228);
 function refreshPage(){
     window.location.reload();
 } 
-function draw_stat(){
+// function draw_stat(){
   
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "grey";
-    ctx.textAlign = "center";
-    ctx.fillText("Score: "+String(stat_score)+"             Steps: "+String(stat_steps), stat_position.x, stat_position.y);
-}
+//     ctx.font = "30px Arial";
+//     ctx.fillStyle = "grey";
+//     ctx.textAlign = "center";
+//     ctx.fillText("Score: "+String(stat_score)+"             Steps: "+String(stat_steps), stat_position.x, stat_position.y);
+// }
 
 function Dot(x,y){
     this.x = x;
@@ -162,6 +164,7 @@ function random_color(){
 }
 
 function Figure(form_id,color){
+    
     this.form_id = form_id;
     this.color = color;
 }
@@ -556,7 +559,7 @@ function draw_pool(){
 
 function main_update(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    draw_stat();
+    // draw_stat();
     draw_field();
     draw_pool();
 }
@@ -809,6 +812,7 @@ function clear_filled_lines(){
             field_segments[j][i].color = "grey";
         }
         stat_score+=game_size;
+       
     }
 
     for (let j of verticals) {
@@ -817,7 +821,9 @@ function clear_filled_lines(){
             field_segments[i][j].color = "grey";
         }
         stat_score+=game_size;
-    }
+        
+    } 
+     scroeElem.innerHTML=stat_score;
 }
 
 function mouse_touch_up(e){
@@ -839,6 +845,7 @@ function mouse_touch_up(e){
                 hovered_block.figure = null;
                 clear_filled_lines();
                 stat_score+=targeted_field_segments.length;
+                scroeElem.innerHTML=stat_score;
                 hovered_block.clear();
                 hovered_block.unselect_block();
                 clear_pool_blocks_count ++;
@@ -846,6 +853,7 @@ function mouse_touch_up(e){
                     clear_pool_blocks_count = 0;
                     update_pool();
                     stat_steps ++;
+                    stepElem.innerHTML=stat_steps;
                 }
                 if (game_is_over()){
                     game_over();
