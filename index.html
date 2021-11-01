@@ -10,10 +10,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div class="loader">
-        <div class="circle"></div>
-        <div class="circle"></div>
-    </div>
+  <div class="loader">
+    <div class="circle"></div>
+    <div class="circle"></div>
+
+  </div>
+      
+  <section class="main">
+
+  <div class="back">
+    <section class="dash">
+      <section class="canvas-field">
+        <div class="Sc">Score: <span id="Score">0 </span>Steps: <span id="Step">0</span>
+            <button class="restart" type="submit" onClick="refreshPage()">Restart</button>
+         </div>
+        <canvas id="canvas"  width="1200" height="800" id="field" ></canvas>
+        </div>
 
     <section class="main">
         <section class="dash">
@@ -23,9 +35,11 @@
             </section>
         </section>
     </section>
+  </div>
+ 
+    <script src="assets/scripts/main.js"></script>
 
     <script src="assets/scripts/main.js" type="module"></script>
     <script src="assets/scripts/layout.js"></script>
-
 </body>
 </html>

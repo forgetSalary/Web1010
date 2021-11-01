@@ -1,14 +1,19 @@
 *{
-    
   margin:0;
   padding: 0;
   box-sizing: border-box;
 }
-
+.back{
+min-height: 100vh;
+width: 100%;
+background-color: #000;
+background-image: url(https://media2.giphy.com/media/BHNfhgU63qrks/giphy.gif?cid=ecf05e47258lwhm39hnocwtf1mxzawdp85zbinjo5es83qvf&rid=giphy.gif&ct=g);
+background-repeat:no-repeat;
+background-size: 100%;
+}
 .canvas-field{
-
   display: block;
-  background: #2f2c2c;
+  background: #262626;
   width: min-content;
   height:min-content;
   margin:auto;
@@ -21,22 +26,44 @@ main{
 
 }
 .dash{
- padding-top: 3%;
+ padding-top: 2%;
+ 
 }
 
 .restart{
+  
 position: absolute;
 color:grey;
 border: none;
 font-size: 30px;
 background: none;
-margin-left: 25%;
-margin-top:15px; 
+padding-left: 200px;
+padding-top:10px;
+ 
 }
 .restart:hover{
+  
   color:#bc2a8d;
   transition: 0.3s ;
 }
+span{
+  color:#bc2a8d;
+  font-size: 30px;
+ 
+}
+.Sc{
+  font-size: 30px;
+  color:grey;
+  padding:2%;
+}
+.Steps{
+  font-size: 30px;
+  color:grey;
+}
+span#Score{
+  padding-right:100px ;
+}
+
 
 
 
