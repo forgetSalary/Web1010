@@ -4,7 +4,8 @@ import {pool_blocks,field_segments, update_pool, draw_pool,draw_field} from "./f
 import {main_header_height,selected_segment_size,field_segment_size} from "./field.js";
 
 const stat_position = new Dot(canvas.width/2,main_header_height/2+10);
-
+const score= document.getElementById("Score");
+const step= document.getElementById("Step");
 let stat_score = 0;
 let stat_steps = 0;
 
@@ -265,6 +266,8 @@ function clear_filled_lines(){
         }
         stat_score+=game_size;
     }
+    score.innerHTML=stat_score;
+   
 }
 
 function mouse_touch_up(e){
@@ -307,7 +310,8 @@ function mouse_touch_up(e){
         }
         block_is_selected = false;
     }
-
+    step.innerHTML=stat_steps;
+    score.innerHTML=stat_score;
     main_update();
 }
 
