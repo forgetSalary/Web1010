@@ -8,13 +8,6 @@ const stat_position = new Dot(canvas.width/2,main_header_height/2+10);
 let stat_score = 0;
 let stat_steps = 0;
 
-function draw_stat(){
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "grey";
-    ctx.textAlign = "center";
-    ctx.fillText("Score: "+String(stat_score)+"             Steps: "+String(stat_steps), stat_position.x, stat_position.y);
-}
-
 function TargetFieldSegment(segment,fill_factor,j,k){
     this.j = j;
     this.k = k;
@@ -338,7 +331,6 @@ document.addEventListener("keydown", (e) => {
 
 export function main_update(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    draw_stat();
     draw_field();
     draw_pool();
 }
