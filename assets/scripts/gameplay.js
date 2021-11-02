@@ -1,11 +1,10 @@
+import {canvas, ctx} from "./common.js";
 import {Dot,vector_len} from "./common.js";
-import {canvas,ctx,game_size} from "./field.js";
 import {pool_blocks,field_segments, update_pool, draw_pool,draw_field} from "./field.js";
-import {main_header_height,selected_segment_size,field_segment_size} from "./field.js";
+import {game_size,selected_segment_size,field_segment_size} from "./field.js";
 
-const stat_position = new Dot(canvas.width/2,main_header_height/2+10);
-const score= document.getElementById("Score");
-const step= document.getElementById("Step");
+const score = document.getElementById("Score");
+const step = document.getElementById("Step");
 let stat_score = 0;
 let stat_steps = 0;
 
@@ -19,7 +18,7 @@ function TargetFieldSegment(segment,fill_factor,j,k){
 const DebugColors = [
     "#2deeaf",
     "#d255b0",
-    "#44ff00",
+    "#000000",
     "#fbfb16",
     "#123c12",
     "#1635fb",
@@ -163,65 +162,111 @@ function game_over(){
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
 }
 
-canvas.addEventListener("mousemove", (e) => {
-    if (block_is_selected){
-        //get_target_segments(hovered_block);
-        hovered_block.move_block(e.clientX,e.clientY);
-        main_update();
-    }
-});
-
-canvas.addEventListener("touchmove", (e) => {
-    if (block_is_selected){
-        hovered_block.move_block(e.touches[0].clientX,e.touches[0].clientY);
-        main_update();
-    }
-});
-
-canvas.addEventListener("touchstart", (e)=>{
-    let found = false;
-    for (let i = 0;i < 3; i++) {
-        if (ctx.isPointInPath(pool_blocks[i].path, e.touches[0].clientX, e.touches[0].clientY)) {
-            if (!pool_blocks[i].is_clear){
-                hovered_block = pool_blocks[i];
-                found = true;
-                break;
-            }
+export function GameEvents(){
+    this.mouse_move = function(e){
+        if (block_is_selected){
+            //get_target_segments(hovered_block);
+            hovered_block.move_block(e.clientX,e.clientY);
+            game_draw();
         }
     }
-    if (!found)
-        hovered_block = null;
-    if (hovered_block){
-        hovered_block.select_block(e.touches[0].clientX,e.touches[0].clientY);
-        block_is_selected = true;
-    }
-    main_update();
-});
-
-canvas.addEventListener("mousedown", e => {
-    let found = false;
-    for (let i = 0;i < 3; i++) {
-        if (ctx.isPointInPath(pool_blocks[i].path, e.offsetX, e.offsetY)) {
-            if (!pool_blocks[i].is_clear){
-                hovered_block = pool_blocks[i];
-                found = true;
-                break;
+    this.mouse_down = function (e){
+        let found = false;
+        for (let i = 0;i < 3; i++) {
+            if (ctx.isPointInPath(pool_blocks[i].path, e.offsetX, e.offsetY)) {
+                if (!pool_blocks[i].is_clear){
+                    hovered_block = pool_blocks[i];
+                    found = true;
+                    break;
+                }
             }
         }
+        if (!found)
+            hovered_block = null;
+        if (hovered_block){
+            hovered_block.select_block(e.clientX,e.clientY);
+            block_is_selected = true;
+        }
+        game_draw();
     }
-    if (!found)
-        hovered_block = null;
-    if (hovered_block){
-        hovered_block.select_block(e.clientX,e.clientY);
-        block_is_selected = true;
+    this.mouse_up = function (){
+        if (hovered_block){
+            //targeted_field_segments = null;
+            targeted_field_segments = get_target_segments(hovered_block);
+            if (targeted_field_segments){
+                let block_can_be_placed = true;
+                for (let i = 0; i < targeted_field_segments.length; i++) {
+                    if (!targeted_field_segments[i].state){
+                        block_can_be_placed = false;
+                    }
+                }
+                if(block_can_be_placed && targeted_field_segments.length === hovered_block.figure_segments.length){
+                    hovered_block.is_clear = 1;
+                    for (let i = 0; i < targeted_field_segments.length; i++) {
+                        targeted_field_segments[i].color = hovered_block.figure_segments[0].color;
+                        targeted_field_segments[i].state = 0;
+                    }
+                    hovered_block.figure = null;
+                    clear_filled_lines();
+                    stat_score+=targeted_field_segments.length;
+                    hovered_block.clear();
+                    hovered_block.unselect_block();
+                    clear_pool_blocks_count ++;
+                    if(clear_pool_blocks_count === 3){
+                        clear_pool_blocks_count = 0;
+                        update_pool();
+                        stat_steps ++;
+                    }
+                    if (is_game_over()){
+                        game_over();
+                    }
+                }else{
+                    hovered_block.unselect_block();
+                }
+            }
+            else{
+                hovered_block.unselect_block();
+            }
+            block_is_selected = false;
+        }
+        step.innerHTML = stat_steps;
+        score.innerHTML = stat_score;
+        game_draw();
     }
-    main_update();
-});
+    this.touch_move = function(e){
+        if (block_is_selected){
+            hovered_block.move_block(e.touches[0].clientX,e.touches[0].clientY);
+            game_draw();
+        }
+    }
+    this.touch_start = function(e){
+        let found = false;
+        for (let i = 0;i < 3; i++) {
+            if (ctx.isPointInPath(pool_blocks[i].path, e.touches[0].clientX, e.touches[0].clientY)) {
+                if (!pool_blocks[i].is_clear){
+                    hovered_block = pool_blocks[i];
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found)
+            hovered_block = null;
+        if (hovered_block){
+            hovered_block.select_block(e.touches[0].clientX,e.touches[0].clientY);
+            block_is_selected = true;
+        }
+        game_draw();
+    }
+}
 
 let clear_pool_blocks_count = 0;
+
+function LineOfSegments(segments){
+    this.segments = segments;
+}
 
 function clear_filled_lines(){
     let horizontal_count = 0;
@@ -270,71 +315,13 @@ function clear_filled_lines(){
    
 }
 
-function mouse_touch_up(e){
-    if (hovered_block){
-        //targeted_field_segments = null;
-        targeted_field_segments = get_target_segments(hovered_block);
-        if (targeted_field_segments){
-            let block_can_be_placed = true;
-            for (let i = 0; i < targeted_field_segments.length; i++) {
-                if (!targeted_field_segments[i].state){
-                    block_can_be_placed = false;
-                }
-            }
-            if(block_can_be_placed && targeted_field_segments.length === hovered_block.figure_segments.length){
-                hovered_block.is_clear = 1;
-                for (let i = 0; i < targeted_field_segments.length; i++) {
-                    targeted_field_segments[i].color = hovered_block.figure_segments[0].color;
-                    targeted_field_segments[i].state = 0;
-                }
-                hovered_block.figure = null;
-                clear_filled_lines();
-                stat_score+=targeted_field_segments.length;
-                hovered_block.clear();
-                hovered_block.unselect_block();
-                clear_pool_blocks_count ++;
-                if(clear_pool_blocks_count === 3){
-                    clear_pool_blocks_count = 0;
-                    update_pool();
-                    stat_steps ++;
-                }
-                if (is_game_over()){
-                    game_over();
-                }
-            }else{
-                hovered_block.unselect_block();
-            }
-        }
-        else{
-            hovered_block.unselect_block();
-        }
-        block_is_selected = false;
-    }
-    step.innerHTML=stat_steps;
-    score.innerHTML=stat_score;
-    main_update();
-}
-
-canvas.addEventListener("touchend", mouse_touch_up);
-canvas.addEventListener("mouseup", mouse_touch_up);
-
-document.addEventListener("keydown", (e) => {
-    switch (e.code){
-        case "KeyM":
-            let matrix = "";
-            for (let i = 0; i < game_size; i++) {
-                for (let j = 0; j < game_size; j++) {
-                    matrix += (field_segments[i][j].state+',');
-                }
-                matrix += '\n';
-            }
-            console.log(matrix);
-            break;
-    }
-});
-
-export function main_update(){
+export function game_draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw_field();
     draw_pool();
+}
+
+export function game_start(){
+    update_pool();
+    game_draw();
 }

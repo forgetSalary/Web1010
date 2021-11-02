@@ -1,5 +1,6 @@
 import {update_pool} from "./field.js";
-import {main_update} from "./gameplay.js";
+import {game_draw} from "./gameplay.js";
+import {main_menu_update} from "./main_menu.js";
+import "./events.js"
 
-update_pool();
-main_update();
+main_menu_update();

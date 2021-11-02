@@ -4,12 +4,12 @@
   box-sizing: border-box;
 }
 .back{
-min-height: 100vh;
-width: 100%;
-background-color: #000;
-background-image: url(https://media2.giphy.com/media/BHNfhgU63qrks/giphy.gif?cid=ecf05e47258lwhm39hnocwtf1mxzawdp85zbinjo5es83qvf&rid=giphy.gif&ct=g);
-background-repeat:no-repeat;
-background-size: 100%;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #000;
+  background-image: url(https://media2.giphy.com/media/BHNfhgU63qrks/giphy.gif?cid=ecf05e47258lwhm39hnocwtf1mxzawdp85zbinjo5es83qvf&rid=giphy.gif&ct=g);
+  background-repeat:no-repeat;
+  background-size: 100%;
 }
 .canvas-field{
   display: block;
@@ -51,7 +51,11 @@ span{
   font-size: 30px;
  
 }
-.Sc{
+._game_header{
+ display: none;
+}
+
+.game_header{
   font-size: 30px;
   color:grey;
   padding:2%;

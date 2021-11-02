@@ -36,3 +36,17 @@ export function Dot(x,y){
 export function vector_len(x1,y1,x2,y2){
     return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
 }
+
+export const canvas = document.getElementById('canvas');
+export const ctx = canvas.getContext('2d');
+
+export const GameStates = {
+    MAIN_MENU: 0,
+    GAME: 1,
+    PAUSE: 2
+}
+
+let game_state = GameStates.MAIN_MENU;
+
+export function set_game_state(state){game_state = state;}
+export function get_game_state(state){return game_state;}

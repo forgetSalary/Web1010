@@ -1,11 +1,8 @@
+import {canvas,ctx} from "./common.js";
 import {Dot,main_rand,max,min} from "./common.js";
 
-export const canvas = document.getElementById('canvas');
-export const ctx = canvas.getContext('2d');
-
-export const game_size = 10;
-
 const field_size = 55*10;
+export const game_size = 10;
 export const main_header_height = 70;
 export const field_segment_size = field_size/game_size - 5;
 const field_segment_offset = field_segment_size/10;
@@ -28,7 +25,6 @@ function Segment(x,y,size){
     this.path = null;
     this.color = "grey";
 
-    this.state = 1;
     this.draw = function (){
         this.path = new Path2D();
         ctx.beginPath();
@@ -38,6 +34,18 @@ function Segment(x,y,size){
         ctx.strokeStyle = "#000000";
         ctx.stroke(this.path);
     }
+}
+
+function FieldSegment(x,y,size){
+    Segment.call(this,x,y,size);
+    this.state = 1;
+    this.disappear_animation = function (){
+
+    }
+}
+
+function PoolSegment(x,y,size){
+    Segment.call(this,x,y,size);
 }
 
 const colors = [
@@ -125,7 +133,7 @@ export let field_segments = [];
 for (let i = 0; i < game_size; i++) {
     field_segments.push([]);
     for (let j = 0; j < game_size; j++) {
-        field_segments[i].push(new Segment(
+        field_segments[i].push(new FieldSegment(
             i*field_segment_space+field_segments_start_x,
             j*field_segment_space+main_header_height,
             field_segment_size));
@@ -170,7 +178,7 @@ function PoolBlock(start_x){
     for (let i = 0; i < 5; i++) {
         this.segments.push([]);
         for (let j = 0; j < 5; j++) {
-            this.segments[i].push(new Segment(
+            this.segments[i].push(new PoolSegment(
                 i*(pool_block_segment_space)+start_x,
                 j*(pool_block_segment_space)+pool_header_height,
                 pool_block_segment_size));
@@ -485,7 +493,6 @@ export function update_pool(){
         pool_blocks[i].figure = random_figure();
         pool_blocks[i].process_figure();
     }
-
 }
 
 export function draw_pool(){
