@@ -2,6 +2,7 @@ import {canvas,ctx} from "./common.js";
 import {Dot} from "./common.js";
 import {GameStates,set_game_state} from "./common.js";
 import {game_start} from "./gameplay.js";
+import {layout_start_game} from "./layout.js";
 
 const std_button_width = 300;
 const std_button_height = 150;
@@ -65,6 +66,7 @@ const buttons = {
         std_button_height,
         "PLAY",
         function (){
+            layout_start_game();
             set_game_state(GameStates.GAME);
             game_start();
         }
@@ -103,7 +105,7 @@ export function MainMenuEvents(){
                 e.clientX - canvas.offsetLeft ,
                 e.clientY - canvas.offsetTop)){
                 b.state = MenuButtonState.AFTER;
-                main_menu_update();
+                main_menu_draw();
                 break;
             }
         }
@@ -115,7 +117,7 @@ export function MainMenuEvents(){
                 e.clientX - canvas.offsetLeft ,
                 e.clientY - canvas.offsetTop)){
                 b.state = MenuButtonState.BEFORE;
-                main_menu_update();
+                main_menu_draw();
                 b.event();
                 break;
             }
@@ -130,7 +132,7 @@ function draw_logo(){
     ctx.fillText("2020!", canvas.width/2, header_height + logo_offset_top);
 }
 
-export function main_menu_update(){
+export function main_menu_draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     draw_logo();
     for (const b of Object.values(buttons)) {

@@ -1,6 +1,6 @@
-import {canvas, ctx} from "./common.js";
+import {canvas, ctx, GameStates, set_game_state} from "./common.js";
 import {Dot,vector_len} from "./common.js";
-import {pool_blocks,field_segments, update_pool, draw_pool,draw_field} from "./field.js";
+import {pool_blocks,field_segments, update_pool,draw_field, draw_pool} from "./field.js";
 import {game_size,selected_segment_size,field_segment_size} from "./field.js";
 
 const score = document.getElementById("Score");
@@ -169,7 +169,6 @@ export function GameEvents(){
         if (block_is_selected){
             //get_target_segments(hovered_block);
             hovered_block.move_block(e.clientX,e.clientY);
-            game_draw();
         }
     }
     this.mouse_down = function (e){
@@ -189,7 +188,6 @@ export function GameEvents(){
             hovered_block.select_block(e.clientX,e.clientY);
             block_is_selected = true;
         }
-        game_draw();
     }
     this.mouse_up = function (){
         if (hovered_block){
@@ -209,7 +207,6 @@ export function GameEvents(){
                         targeted_field_segments[i].state = 0;
                     }
                     hovered_block.figure = null;
-                    clear_filled_lines();
                     stat_score+=targeted_field_segments.length;
                     hovered_block.clear();
                     hovered_block.unselect_block();
@@ -222,6 +219,7 @@ export function GameEvents(){
                     if (is_game_over()){
                         game_over();
                     }
+                    clear_filled_lines();
                 }else{
                     hovered_block.unselect_block();
                 }
@@ -233,12 +231,10 @@ export function GameEvents(){
         }
         step.innerHTML = stat_steps;
         score.innerHTML = stat_score;
-        game_draw();
     }
     this.touch_move = function(e){
         if (block_is_selected){
             hovered_block.move_block(e.touches[0].clientX,e.touches[0].clientY);
-            game_draw();
         }
     }
     this.touch_start = function(e){
@@ -258,22 +254,75 @@ export function GameEvents(){
             hovered_block.select_block(e.touches[0].clientX,e.touches[0].clientY);
             block_is_selected = true;
         }
-        game_draw();
     }
 }
 
 let clear_pool_blocks_count = 0;
 
-function LineOfSegments(segments){
-    this.segments = segments;
+function rgba_change_opacity(str,opacity_str){
+    return str.slice(0,str.lastIndexOf(',')+1) + opacity_str + ")";
+}
+
+let horizontals;
+let verticals;
+let collisions;
+let animate_deleting_raf;
+
+const clearing_animation_time_s = 1.5;
+const fps = 60;
+let clearing_animation_opacity = 100;
+
+function update_segments_for_animation(){
+    for (let i = 0; i < game_size; i++) {
+        for (let j of horizontals) {
+            if (!collisions[j]){
+                field_segments[j][i].color =
+                    rgba_change_opacity(field_segments[j][i].color,"0."+clearing_animation_opacity);
+            }
+        }
+        for (let j of verticals) {
+            field_segments[i][j].color =
+                rgba_change_opacity(field_segments[i][j].color,"0."+clearing_animation_opacity);
+        }
+    }
+}
+
+function set_default_colors(){
+    for (let i = 0; i < game_size; i++) {
+        for (let j of horizontals) {
+            if (!collisions[j]){
+                field_segments[j][i].set_default_color();
+            }
+        }
+        for (let j of verticals) {
+            field_segments[i][j].set_default_color();
+        }
+    }
+}
+
+function Animation(handler){
+    this.do = false;
+    this.handler = handler;
+}
+
+const GameAnimations = {
+    LINES_CLEARING: new Animation(function (){
+        clearing_animation_opacity -= 2;
+        if (clearing_animation_opacity < 0){
+            set_default_colors();
+            GameAnimations.LINES_CLEARING.do = false;
+        }else{
+            update_segments_for_animation();
+        }
+    }),
 }
 
 function clear_filled_lines(){
     let horizontal_count = 0;
     let vertical_count = 0;
 
-    let horizontals = [];
-    let verticals = [];
+    horizontals = [];
+    verticals = [];
 
     for (let i = 0; i < game_size; i++) {
         for (let j = 0; j < game_size; j++) {
@@ -296,32 +345,48 @@ function clear_filled_lines(){
         vertical_count = 0;
     }
 
-    for (let j of horizontals) {
-        for (let i = 0; i < game_size; i++) {
-            field_segments[j][i].state = 1;
-            field_segments[j][i].color = "grey";
+    collisions = Array();
+    collisions.length = game_size;
+    for (let i = 0; i < collisions.length; i++) collisions[i] = false;
+
+    if (verticals.length !== 0 && horizontals.length !== 0){
+        for (let i of verticals){
+            collisions[i] = true;
         }
-        stat_score+=game_size;
+    }else if(verticals.length === 0 && horizontals.length === 0){
+        return;
     }
 
-    for (let j of verticals) {
-        for (let i = 0; i < game_size; i++) {
-            field_segments[i][j].state = 1;
-            field_segments[i][j].color = "grey";
+    for (let i = 0; i < game_size; i++) {
+        for (let j of horizontals) {
+            if (!collisions[j]){
+                field_segments[j][i].state = 1;
+                stat_score++;
+            }
         }
-        stat_score+=game_size;
+        for (let j of verticals) {
+            field_segments[i][j].state = 1;
+            stat_score++;
+        }
     }
+    clearing_animation_opacity = 100;
+    GameAnimations.LINES_CLEARING.do = true;
     score.innerHTML=stat_score;
-   
 }
 
 export function game_draw(){
+    ctx.fillStyle = 'rgba(255, 255, 255)';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let a of Object.values(GameAnimations)){
+        if (a.do){
+            a.handler();
+        }
+    }
     draw_field();
     draw_pool();
 }
 
 export function game_start(){
     update_pool();
-    game_draw();
 }
+

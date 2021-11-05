@@ -23,7 +23,7 @@ function Segment(x,y,size){
     this.position = new Dot(x,y);
     this.size = size;
     this.path = null;
-    this.color = "grey";
+    this.color = "rgba(164,164,164,1)";
 
     this.draw = function (){
         this.path = new Path2D();
@@ -36,11 +36,25 @@ function Segment(x,y,size){
     }
 }
 
+const field_segment_default_color = "rgba(164,164,164,1)";
 function FieldSegment(x,y,size){
     Segment.call(this,x,y,size);
     this.state = 1;
-    this.disappear_animation = function (){
+    this.animation_speed = 0;
 
+    this.set_default_color = function (){
+        this.color = "rgba(164,164,164,1)";
+    }
+    this.draw = function (){
+        this.path = new Path2D();
+        ctx.beginPath();
+        this.path.rect(this.position.x, this.position.y, this.size, this.size);
+        ctx.fillStyle = field_segment_default_color;
+        ctx.fill(this.path);
+        ctx.fillStyle = this.color;
+        ctx.fill(this.path);
+        ctx.strokeStyle = "#000000";
+        ctx.stroke(this.path);
     }
 }
 
@@ -55,7 +69,7 @@ const colors = [
     // "#ffca00",
     // "#911acf",
     // "#e902dc"
-    "#101010"
+    "rgba(9,4,14,1)"
 ]
 
 const Forms = {

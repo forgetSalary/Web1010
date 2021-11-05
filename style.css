@@ -3,7 +3,7 @@
   padding: 0;
   box-sizing: border-box;
 }
-.back{
+._back{
   min-height: 100vh;
   width: 100%;
   background-color: #000;
@@ -11,6 +11,15 @@
   background-repeat:no-repeat;
   background-size: 100%;
 }
+
+.back{
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0e010e;
+  background-repeat:no-repeat;
+  background-size: 100%;
+}
+
 .canvas-field{
   display: block;
   background: #262626;
@@ -26,7 +35,7 @@ main{
 
 }
 .dash{
- padding-top: 2%;
+ padding-top: 6%;
  
 }
 
@@ -52,7 +61,7 @@ span{
  
 }
 ._game_header{
- display: none;
+ visibility: hidden;
 }
 
 .game_header{
